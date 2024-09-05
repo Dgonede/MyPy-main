@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Products List
+{% endblock %}
+
+{% block body %}
+<div class="product_container">
+    <h1 class="text-warning">Products</h1>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-2 col-sm-6 col-12 mb-4 card-container">
+            <a href="{% url 'store_app:product_detail' product.id %}" class="card text-decoration-none"> <!-- Обернули карточку в ссылку -->
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p class="card-text">Описание: {{ product.description|truncatechars:20 }}</p>
+                    <p class="card-text">Категория: {{ product.category }}</p>
+                    <p class="card-text">Цена: {{ product.price }}₽</p>
+                    <button class="btn btn-primary">Положить в корзину</button>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'store_app/components/back-to-store-index.html' %}
+{% endblock %}

@@ -1,0 +1,5 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.vscode/
+homework_07\store_project\store_project\settings.py

@@ -1,0 +1,18 @@
+[tool.poetry]
+package-mode = false
+name = "homework-05"
+version = "0.1.0"
+description = ""
+authors = ["Dgonede <dgonegonee@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^3.0.3"
+flask-migrate = "^4.0.7"
+psycopg = "^3.2.1"
+sqlalchemy = "^2.0.31"
+flask-sqlalchemy = "^3.1.1"
+
+
+

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container_register">
+    <h2>Регистрация</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Отображение ошибок, не привязанных к конкретному полю -->
+        {% if form.non_field_errors %}
+            <div class="error">{{ form.non_field_errors }}</div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label class="label">
+                {{ form.username.label }} {{ form.username }}
+            </label>
+            {% if form.username.errors %}
+                <div class="error">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="label">
+                {{ form.email.label }} {{ form.email }}
+            </label>
+            {% if form.email.errors %}
+                <div class="error">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="label">
+                {{ form.password1.label }} {{ form.password1 }}
+            </label>
+            {% if form.password1.errors %}
+                <div class="error">{{ form.password1.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="label">
+                {{ form.password2.label }} {{ form.password2 }}
+            </label>
+            {% if form.password2.errors %}
+                <div class="error">{{ form.password2.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <input type="submit" value="Регистрация">
+    </form>
+    
+    {% include 'store_app/components/back-to-store-index.html' %}
+</div>
+{% endblock %}

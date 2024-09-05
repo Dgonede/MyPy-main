@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ product.title }} - Details
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="text-warning">{{ product.title }}</h1>
+    <p><strong>Описание:</strong> {{ product.description }}</p>
+    <p><strong>Категория:</strong> {{ product.category }}</p>
+    <p><strong>Цена:</strong> {{ product.price }}₽ </p>
+    <p><strong>Архивирован:</strong> {{ product.archived|yesno:"Да,Нет" }}</p>
+    <a href="{% url 'store_app:products_index' %}" class="btn btn-secondary">Назад к списку продуктов</a>
+</div>
+{% endblock %}
