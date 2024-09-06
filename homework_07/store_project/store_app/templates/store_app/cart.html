@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Корзина
+{% endblock %}
+
+{% block body %}
+<h1>Ваша корзина</h1>
+<p>Общее количество товаров: {{ total_quantity }}</p>
+<ul>
+    {% for item in order.order_products.all %}
+    <li>
+        {{ item.product.title }} - {{ item.quantity }} шт. - {{ item.price }}₽
+        <form action="{% url 'store_app:remove_from_cart' item.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+        </form>
+    </li>
+    {% empty %}
+    <li>Ваша корзина пуста.</li>
+    {% endfor %}
+</ul>
+
+<!-- Форма для оформления заказа -->
+<form action="{% url 'store_app:checkout' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="address">Адрес доставки:</label>
+        <input type="text" id="address" name="address" required>
+    </div>
+    <button type="submit">Оформить заказ</button>
+</form>
+
+<a href="{% url 'store_app:products_index' %}">Продолжить покупки</a>
+{% endblock %}

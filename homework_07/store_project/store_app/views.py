@@ -1,7 +1,8 @@
 from typing import Any
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.views import View
 from django.views.generic import (
     TemplateView, 
     CreateView, 
@@ -12,7 +13,7 @@ from django.views.generic import (
 from store_app.models import Product, Order
 from celery.result import AsyncResult 
 from .forms import CategoryCreateUpdateForm
-from .models import Category
+from .models import Category, OrderProduct
 from .mixins import PageTitleMixin
 
 
@@ -123,3 +124,83 @@ class ProductDetailView(DetailView):
     def get_object(self, queryset=None):
         # Используем id из URL для получения объекта
         return get_object_or_404(Product, id=self.kwargs['id'])
+    
+
+# КОРЗИНА
+class AddToCartView(LoginRequiredMixin, View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        quantity = int(request.POST.get('quantity', 1))
+        
+        order, created = Order.objects.get_or_create(user=request.user, comment="Корзина", defaults={'adress': ''})
+        order_product, created = OrderProduct.objects.get_or_create(order=order, product=product, defaults={'quantity': 0, 'price': product.price})
+        
+        order_product.quantity += quantity
+        order_product.price = product.price
+        order_product.save()
+
+        # Подсчет общего количества товаров в корзине
+        total_quantity = sum(item.quantity for item in order.order_products.all())
+
+        return JsonResponse({'cart_item_count': total_quantity})
+
+class CartView(LoginRequiredMixin, TemplateView):
+    template_name = "store_app/cart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order = get_object_or_404(Order, user=self.request.user, comment="Корзина")
+        context['order'] = order
+        
+        # Подсчет общего количества товаров в корзине
+        total_quantity = sum(item.quantity for item in order.order_products.all())
+        context['total_quantity'] = total_quantity
+        
+        return context
+
+
+class RemoveFromCartView(LoginRequiredMixin, View):
+    def post(self, request, item_id):
+        order = get_object_or_404(Order, user=request.user, comment="Корзина")
+        order_product = get_object_or_404(OrderProduct, id=item_id, order=order)
+        
+        # Удаляем товар из корзины
+        order_product.delete()
+        
+        return redirect('store_app:cart_view')  # Перенаправление на страницу корзины  
+
+
+class CheckoutView(LoginRequiredMixin, View):
+    def post(self, request):
+        address = request.POST.get('address')
+        
+        # Получаем товары из запроса (например, из формы или JSON)
+        products = request.POST.getlist('product_ids')  # Список ID продуктов
+        quantities = request.POST.getlist('quantities')  # Список количеств
+
+        # Создаем новый заказ
+        new_order = Order.objects.create(user=request.user, adress=address, comment="Заказ оформлен")
+
+        # Переносим товары в новый заказ
+        for product_id, quantity in zip(products, quantities):
+            product = get_object_or_404(Product, id=product_id)
+            OrderProduct.objects.create(
+                order=new_order,
+                product=product,
+                quantity=int(quantity),  # Преобразуем в целое число
+                price=product.price
+            )
+
+        # Удаляем товары из корзины, если они были
+        # Убедитесь, что у вас есть логика для удаления товаров из корзины, если это необходимо
+        # Например, если у вас есть Order с comment="Корзина", вы можете удалить его
+        try:
+            order = Order.objects.get(user=request.user, comment="Корзина")
+            order.order_products.all().delete()  # Удаляем все товары из корзины
+            order.delete()  # Удаляем саму корзину
+        except Order.DoesNotExist:
+            pass  # Корзина не найдена, ничего не делаем
+
+        # Перенаправление на главную страницу или страницу подтверждения
+        return redirect('/')
+             

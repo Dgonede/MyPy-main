@@ -1,8 +1,12 @@
 from django.urls import path
 
 from .views import (
+    AddToCartView,
+    CartView,
+    CheckoutView,
     ProductsIndexView, 
-    OrdersIndexView, 
+    OrdersIndexView,
+    RemoveFromCartView, 
     task_status,
     create_category,
     CreateCategory,
@@ -23,5 +27,9 @@ urlpatterns = [
     path("category/<int:pk>/", ReadCategory.as_view(), name="read_category"),
     path("category/", ListCategory.as_view(), name="list_category"),
     path("product/<int:id>/", ProductDetailView.as_view(), name="product_detail"),
+    path('add-to-cart/<int:product_id>/', AddToCartView.as_view(), name='add_to_cart'),
+    path('cart/', CartView.as_view(), name='cart_view'),  # URL для отображения корзины
+    path('remove-from-cart/<int:item_id>/', RemoveFromCartView.as_view(), name='remove_from_cart'),
+    path('checkout/', CheckoutView.as_view(), name='checkout'),
 ]
 

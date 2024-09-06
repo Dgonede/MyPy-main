@@ -5,24 +5,40 @@ Products List
 {% endblock %}
 
 {% block body %}
+
 <div class="product_container">
     <h1 class="text-warning">Products</h1>
     <div class="row">
         {% for product in products %}
         <div class="col-md-2 col-sm-6 col-12 mb-4 card-container">
-            <a href="{% url 'store_app:product_detail' product.id %}" class="card text-decoration-none"> <!-- Обернули карточку в ссылку -->
+            <a href="{% url 'store_app:product_detail' product.id %}" class="card text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-title">{{ product.title }}</h5>
                     <p class="card-text">Описание: {{ product.description|truncatechars:20 }}</p>
                     <p class="card-text">Категория: {{ product.category }}</p>
                     <p class="card-text">Цена: {{ product.price }}₽</p>
-                    <button class="btn btn-primary">Положить в корзину</button>
                 </div>
+
             </a>
+            <form action="{% url 'store_app:add_to_cart' product.id %}" method="post" class="add-to-cart-form mt-2"
+                data-product-id="{{ product.id }}" data-url="{% url 'store_app:add_to_cart' product.id %}">
+                {% csrf_token %}
+                <span class="quantity-btn" id="decrease" style="cursor: pointer;">
+                    <i class="fas fa-minus"></i>
+                </span>
+                <input type="number" name="quantity" value="1" min="1" class="form-control quantity-input"
+                    style="width: 60px; margin: 0 5px; text-align: center;">
+                <span class="quantity-btn" id="increase" style="cursor: pointer;">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <button type="submit" class="btn btn-primary add-to-cart">Положить в корзину</button>
+            </form>
         </div>
+
         {% endfor %}
     </div>
 </div>
+
 
 {% include 'store_app/components/back-to-store-index.html' %}
 {% endblock %}
