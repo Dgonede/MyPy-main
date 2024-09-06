@@ -174,7 +174,7 @@ class CheckoutView(LoginRequiredMixin, View):
     def post(self, request):
         address = request.POST.get('address')
         
-        # Получаем товары из запроса (например, из формы или JSON)
+        # Получаем товары из запроса
         products = request.POST.getlist('product_ids')  # Список ID продуктов
         quantities = request.POST.getlist('quantities')  # Список количеств
 
@@ -192,8 +192,7 @@ class CheckoutView(LoginRequiredMixin, View):
             )
 
         # Удаляем товары из корзины, если они были
-        # Убедитесь, что у вас есть логика для удаления товаров из корзины, если это необходимо
-        # Например, если у вас есть Order с comment="Корзина", вы можете удалить его
+        
         try:
             order = Order.objects.get(user=request.user, comment="Корзина")
             order.order_products.all().delete()  # Удаляем все товары из корзины
