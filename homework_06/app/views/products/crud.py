@@ -51,4 +51,3 @@ storage.create(
         price=699,
     ),
 )
-

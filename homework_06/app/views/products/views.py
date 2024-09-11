@@ -1,9 +1,9 @@
 from http import HTTPStatus
 from flask import Blueprint, redirect, request, url_for
 from flask import render_template
-from .crud import storage
 from werkzeug.exceptions import NotFound
 from .models import ProductCreate
+from .crud import storage
 
 products_app = Blueprint(
     "products_app",
@@ -46,4 +46,3 @@ def get_products_by_id(product_id):
         "products/details.html",
         product=product,
         )
-

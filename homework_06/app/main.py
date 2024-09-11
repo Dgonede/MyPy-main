@@ -2,8 +2,8 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask import render_template
-from views.products import products_app
-from models.models import db
+from views.products import products_app #pylint:disable=import-error
+from models.models import db #pylint:disable=import-error,no-name-in-module
 app = Flask(__name__)
 app.register_blueprint(products_app)
 
