@@ -21,4 +21,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint homework_06/ --rcfile=.pylintrc
+        pylint homework_06/ --rcfile=homework_06/.pylintrc/
