@@ -18,3 +18,5 @@ class Orders(db.Model):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     owner: Mapped["Owner"] = relationship(back_populates="order")
+   
+   
