@@ -1,3 +1,3 @@
 __all__ = ("app", )
 
-from main import app #pylint:disable=import-error
+from main import app #pylint:disable=import-error 
